@@ -15,29 +15,29 @@ chao-cloud-micro: springcloud nacos+seata+mybatis-plus
 以 spring-cloud 为基础，集成feign、nacos、seata、mybatis-plus 整合单机版分布式事务
 
 	chao-cloud-micro
-		│
-	    ├─api 		//feign接口
-	    ├─gateway 		//微服务网关  8000
-	    ├─provider 		//服务提供者 8001
-	    └─consumer		//服务消费者 8002
+			│
+		    ├─api 		//feign接口
+		    ├─gateway 		//微服务网关  8000
+		    ├─provider 		//服务提供者 8001
+		    └─consumer		//服务消费者 8002
 		
 ------  
 
-## step1-导入sql（mysql）
+## Step1-导入sql（mysql）
 
 - 新建数据源 test，导入 consumer/resources/test.sql
 - 新建数据源 seata，导入 seata/resources/seata.sql
 
-## step2-配置nacos（[nacos@安装手册](https://nacos.io/zh-cn/docs/quick-start.html)）
+## Step2-配置nacos（[nacos@安装手册](https://nacos.io/zh-cn/docs/quick-start.html)）
 
-1.配置jvm增加启动参数（请新增chao-cloud命名空间）
+##### 1.配置jvm增加启动参数（请新增chao-cloud命名空间）
 
 ```
 -Dspring.cloud.nacos.config.server-addr=   #你的nacos服务地址 
 -Dspring.cloud.nacos.config.namespace=  #你的nacos命名空间（这里是 chao-cloud命名空间  的那个随机字符串）
 ```
 
-2.在nacos新增命名空间 chao-cloud 生成以下5个配置
+##### 2.在nacos新增命名空间 chao-cloud 生成以下5个配置
 
 - Data ID：chao-cloud-ext-feign.yaml 		 
 - Group：chao-cloud
@@ -159,7 +159,7 @@ spring:
           enabled: false
 ```
 
-## step3-配置seata
+## Step3-配置seata
 
 ##### 1.在 [Seata Release](https://github.com/seata/seata/releases) 下载相应版本的 Seata Server 并解压
 ##### 2.修改 `conf/registry.conf` 配置，将 type 改为 `nacos`
@@ -233,7 +233,7 @@ sh ./bin/seata-server.sh -p 8091 -m file
 - Group： SEATA_GROUP
 - 内容为  nacos  格式选txet 
 
-## step4-测试
+## Step4-测试
 
 #####  http://localhost:8000/chao-cloud-consumer/test?userId=1
 #####  查看 seata 数据库的 order表 是否有数据，没有则正确
