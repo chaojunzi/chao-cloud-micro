@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: chao-cloud-consumer
+  output:
+    ansi:
+      enabled: always
+  cloud:
+    nacos:
+      config:
+        group: chao-cloud #配置分组
+        file-extension: yaml
+        ext-config: 
+          - data-id: chao-cloud-ext-feign.yaml #feign
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true
+          - data-id: chao-cloud-ext-mysql.yaml #mysql
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true
+
+#日志          
+logging:
+  config: classpath:chao-logback.xml
+log:
+  path: /logs/${spring.cloud.nacos.config.group}/${spring.application.name}
+  maxHistory: 30
