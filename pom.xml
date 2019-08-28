@@ -1,0 +1,38 @@
+﻿<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.github.chaojunzi</groupId>
+		<artifactId>chao-cloud-parent</artifactId>
+		<version>1.0.7</version>
+	</parent>
+	<artifactId>chao-cloud-micro-parent</artifactId>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>chao-cloud-micro-api</module>
+	</modules>
+
+	<dependencies>
+		<!-- nacos 注册中心-配置中心 -->
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.github.chaojunzi</groupId>
+				<artifactId>chao-cloud-micro-api</artifactId>
+				<version>${chao.cloud.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>
