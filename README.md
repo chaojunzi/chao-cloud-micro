@@ -15,11 +15,10 @@ chao-cloud-micro: springcloud nacos+seata+mybatis-plus
 以 spring-cloud 为基础，集成feign、nacos、seata、mybatis-plus 整合单机版分布式事务
 
 	chao-cloud-micro
-			│
-		    ├─api 		//feign接口
-		    ├─gateway 		//微服务网关  8000
-		    ├─provider 		//服务提供者 8001
-		    └─consumer		//服务消费者 8002
+	    ├─api 		//feign接口
+	    ├─gateway 		//微服务网关  8000
+	    ├─provider 		//服务提供者 8001
+	    └─consumer		//服务消费者 8002
 		
 ------  
 
