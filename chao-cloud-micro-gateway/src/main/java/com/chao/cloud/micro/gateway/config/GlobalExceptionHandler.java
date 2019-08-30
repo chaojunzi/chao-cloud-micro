@@ -22,9 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
+public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
 
-	public GlobalErrorWebExceptionHandler(ErrorAttributes errorAttributes, ResourceProperties resourceProperties,
+	public GlobalExceptionHandler(ErrorAttributes errorAttributes, ResourceProperties resourceProperties,
 			ApplicationContext applicationContext) {
 		super(errorAttributes, resourceProperties, applicationContext);
 	}
