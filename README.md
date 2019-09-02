@@ -1,4 +1,4 @@
-chao-cloud-micro: springcloud nacos+seata+sentinel+mybatis-plus  
+chao-cloud-micro: springcloud feign+nacos+seata+sentinel+mybatis-plus  
 =====
 
 <p>
