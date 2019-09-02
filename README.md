@@ -1,4 +1,4 @@
-chao-cloud-micro: springcloud nacos+seata+mybatis-plus  
+chao-cloud-micro: springcloud nacos+seata+sentinel+mybatis-plus  
 =====
 
 <p>
@@ -12,7 +12,7 @@ chao-cloud-micro: springcloud nacos+seata+mybatis-plus
 
 ------
 
-以 spring-cloud 为基础，集成feign、nacos、seata、mybatis-plus 整合单机版分布式事务
+以 spring-cloud 为基础，集成feign、nacos、seata、sentinel、mybatis-plus 整合单机版分布式事务
 
 	chao-cloud-micro
 	    ├─api 		//feign接口
@@ -24,139 +24,50 @@ chao-cloud-micro: springcloud nacos+seata+mybatis-plus
 
 ## Step1-导入sql（mysql）
 
-- 新建数据源 test，导入 consumer/resources/test.sql
-- 新建数据源 seata，导入 seata/resources/seata.sql
+- 新建数据源 test，导入 sql/test.sql
+- 新建数据源 seata，导入 sql/seata.sql
+- 新建数据源 nacos，导入 sql/nacos.sql   
+	- 注：nacos为微服务配置中心下一步详细介绍
 
 ## Step2-配置nacos（[nacos@安装手册](https://nacos.io/zh-cn/docs/quick-start.html)）
 
-##### 1.配置jvm增加启动参数（请新增chao-cloud命名空间）
+##### 1.安装nacos
+- [下载nacos-1.1.3版本](https://github.com/alibaba/nacos/releases) ->nacos-server-1.1.3.zip
+- 解压、修改 conf/application.properties、新增以下3行配置
 
 ```
--Dspring.cloud.nacos.config.server-addr=   #你的nacos服务地址 
--Dspring.cloud.nacos.config.namespace=  #你的nacos命名空间（这里是 chao-cloud命名空间  的那个随机字符串）
+spring.datasource.platform=mysql
+db.num=1
+db.url.0=jdbc:mysql://127.0.0.1/nacos?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true
+db.user=root
+db.password=123456
 ```
 
-##### 2.在nacos新增命名空间 chao-cloud 生成以下5个配置
+- 启动nacos
+    - Linux/Unix/Mac  
+	  - sh startup.sh -m standalone
+    - Windows  
+	  - 双击startup.cmd运行文件。
+- 访问nacos [http://127.0.0.1:8848/nacos](http://127.0.0.1:8848/nacos)
+    - 账号：nacos  
+    - 密码： nacos
 
-- Data ID：chao-cloud-ext-feign.yaml 		 
-- Group：chao-cloud
-
-```
-hystrix.command.default.execution.timeout.enabled: true
-hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: ${ribbon.ReadTimeout}
-
-ribbon.ReadTimeout: 120000
-ribbon.ConnectTimeout: ${ribbon.ReadTimeout}
-
-chao:
-  cloud:
-    feign:
-      request:
-        read-timeout: 120
-        connect-timeout: 120
-        write-timeout: 120
-        keep-alive-duration: 5 #分钟
-        max-idle-connections: 10
-
-feign:
-  httpclient:
-    enabled: false
-  hystrix:
-    enabled: true
-  okhttp:
-    enabled: true
-  compression:
-    request:
-      enabled: true
-      mime-types:
-      - text/xml 
-      - application/xml 
-      - application/json
-      min-request-size: 2048
-    response:
-      enabled: true
-```
-
-- Data ID：chao-cloud-ext-mysql.yaml		 
-- Group：chao-cloud
+##### 2.配置jvm增加启动参数
 
 ```
-mybatis-plus:
-  configuration:
-    map-underscore-to-camel-case: true
-    log-impl:  com.chao.cloud.common.extra.mybatis.log.Slf4jLogImpl
+-Dspring.cloud.nacos.config.server-addr=127.0.0.1:8848   #你的nacos服务地址 
+-Dspring.cloud.nacos.config.namespace=0cdb13f9-8694-49b8-8a37-08b5f1895c6b #你的nacos命名空间（这里是 chao-cloud命名空间 下的那个随机字符串）
 ```
+![Image text](screenshot/nacos-1.png)
 
-- Data ID：chao-cloud-ext-gateway.yaml		 
-- Group：chao-cloud
+##### 3.修改nacos 配置管理->配置列表->点击chao-cloud 
 
-```
-server:
-  port: 8000
+- chao-cloud-ext-provider.yaml  		 
+- chao-cloud-ext-consumer.yaml  		
 
-spring:
-  cloud:
-    nacos:
-      discovery:
-        server-addr: ${spring.cloud.nacos.config.server-addr}
-        namespace: ${spring.cloud.nacos.config.namespace} 
-```
+![Image text](screenshot/nacos-2.png)
+![Image text](screenshot/nacos-3.png)
 
-- Data ID：chao-cloud-ext-provider.yaml  		 
-- Group：chao-cloud
-
-```
-server:
-  port: 8001
-
-spring:
-  cloud:
-    nacos:
-      discovery:
-        server-addr: ${spring.cloud.nacos.config.server-addr}
-        namespace: ${spring.cloud.nacos.config.namespace}
-  datasource:
-    url: jdbc:mysql://127.0.0.1/seata?useSSL=false&useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true&serverTimezone=Asia/Shanghai
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: 123456
-    type: com.alibaba.druid.pool.DruidDataSource
-    druid:
-      validation-query: SELECT 1
-      test-on-borrow: true
-      connection-init-sqls: SET NAMES utf8mb4;
-      filter:
-        wall:
-          enabled: false
-```
-
-- Data ID：chao-cloud-ext-consumer.yaml  		
-- Group：chao-cloud
-
-```
-server:
-  port: 8002
-
-spring:
-  cloud:
-    nacos:
-      discovery:
-        server-addr: ${spring.cloud.nacos.config.server-addr}
-        namespace: ${spring.cloud.nacos.config.namespace}
-  datasource:
-    url: jdbc:mysql://127.0.0.1/test?useSSL=false&useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true&serverTimezone=Asia/Shanghai
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: 123456
-    type: com.alibaba.druid.pool.DruidDataSource
-    druid:
-      validation-query: SELECT 1
-      test-on-borrow: true
-      connection-init-sqls: SET NAMES utf8mb4;
-      filter:
-        wall:
-          enabled: false
-```
 
 ## Step3-配置seata
 
@@ -168,7 +79,7 @@ registry {
   type = "nacos"
 
   nacos {
-    serverAddr = "你的nacos服务地址"
+    serverAddr = "127.0.0.1:8848"
     namespace = "public"
     cluster = "default"
   }
@@ -178,13 +89,13 @@ config {
   type = "nacos"
 
   nacos {
-    serverAddr = "你的nacos服务地址"
+    serverAddr = "127.0.0.1:8848"
     namespace = "public"
     cluster = "default"
   }
 }
 ```
-##### 3.修改 `conf/nacos-config.txt`配置
+##### 3.修改 `conf/nacos-config.txt`配置（上述 nacos.sql 中已经导入、可略过此步骤）
 
 修改 `service.vgroup_mapping`为自己应用对应的名称；如果有多个服务，添加相应的配置
 
@@ -203,11 +114,11 @@ service.vgroup_mapping.chao-cloud-consumer-fescar-service-group=default
 
 注意配置文件末尾有空行，需要删除，否则会提示失败，尽管实际上是成功的
 
-##### 4.将 Seata 配置添加到 Nacos 中 
+##### 4.将 Seata 配置添加到 Nacos 中 （上述 nacos.sql 中已经导入、可略过此步骤）
 
 ```bash
 cd conf
-sh nacos-config.sh localhost  #localhost 为你的nacos服务地址
+sh nacos-config.sh 127.0.0.1:8848  #127.0.0.1:8848 为你的nacos服务地址
 ```
 
 成功后会提示
@@ -216,9 +127,12 @@ sh nacos-config.sh localhost  #localhost 为你的nacos服务地址
 init nacos config finished, please start seata-server
 ```
 
-在 Nacos 管理页面应该可以看到有 47-60（版本不同） 个 Group 为`SEATA_GROUP`的配置
+##### 5.在nacos服务  public 命名空间下添加一个配置（上述 nacos.sql 中已经导入、可略过此步骤）
+- Data Id： registry.type
+- Group： SEATA_GROUP
+- 内容为  nacos  格式选txet 
 
-##### 5.启动 Seata Server 
+##### 6.启动 Seata Server (windows 请直接点击 bin/seata-server.cmd)
 
 ```bash
 cd ..
@@ -227,18 +141,13 @@ sh ./bin/seata-server.sh -p 8091 -m file
 
 启动后在 Nacos 的服务列表下面可以看到一个名为`serverAddr`的服务
 
-##### 6.在nacos服务  public 命名空间下添加一个配置
-- Data Id： registry.type
-- Group： SEATA_GROUP
-- 内容为  nacos  格式选txet 
-
 ## Step4-测试
 
 #####  http://localhost:8000/chao-cloud-consumer/test?userId=1
 #####  查看 seata 数据库的 order表 是否有数据，没有则正确
 
 
-## 自定义 seata-nacos配置
+## 自定义 seata-nacos配置（此步骤可选）
 - 项目的nacos配置和  seata的nacos配置可分开 ->请查看seata/conf/registry.conf 
 
 ```java
@@ -260,7 +169,7 @@ chao:
 
 ## 注意 
 
-### TxSeataConfig 配置
+### TxSeataConfig 配置 （原理）
 
 这里是尤其需要注意的，Seata 是通过代理数据源实现事务分支，所以需要配置 `io.seata.rm.datasource.DataSourceProxy` 的 Bean，且是 `@Primary`默认的数据源，否则事务不会回滚，无法实现分布式事务 
 
@@ -321,6 +230,7 @@ public class TxSeataConfig {
 感谢下列优秀开源项目：
 - [nacos@配置注册中心](https://github.com/alibaba/nacos)  
 - [seata@分布式事务](https://github.com/seata/seata)  
+- [Sentinel@微服务的哨兵](https://github.com/alibaba/Sentinel)  
 - [helloworlde@seata-demo](https://github.com/helloworlde/spring-cloud-alibaba-component)  
 - [hutool-超级工具类](https://github.com/looly/hutool)  
 - [lombok](https://github.com/rzwitserloot/lombok)  

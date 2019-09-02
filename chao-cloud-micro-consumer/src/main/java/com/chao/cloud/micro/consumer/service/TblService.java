@@ -10,6 +10,7 @@ import com.chao.cloud.micro.consumer.dal.entity.XcTbl;
  * @version 1.0.7
  */
 public interface TblService extends IService<XcTbl> {
+
 	/**
 	 * 业务测试
 	 */

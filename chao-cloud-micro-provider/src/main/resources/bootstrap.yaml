@@ -22,5 +22,3 @@ logging:
 log:
   path: /logs/${spring.cloud.nacos.config.group}/${spring.application.name}
   maxHistory: 30
-     
-               
