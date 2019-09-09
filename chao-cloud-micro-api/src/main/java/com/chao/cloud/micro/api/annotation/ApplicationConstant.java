@@ -12,5 +12,6 @@ public interface ApplicationConstant {
 	String CHAO_CLOUD_GATEWAY = CHAO_CLOUD_PREFIX + "gateway";// 网关服务
 	String CHAO_CLOUD_PROVIDER = CHAO_CLOUD_PREFIX + "provider";// 服务提供者
 	String CHAO_CLOUD_CONSUMER = CHAO_CLOUD_PREFIX + "consumer";// 服务消费者
+	String CHAO_CLOUD_AUTH = CHAO_CLOUD_PREFIX + "auth";// 授权
 
 }

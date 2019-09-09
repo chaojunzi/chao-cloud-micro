@@ -17,10 +17,14 @@ spring:
       config:
         group: chao-cloud
         file-extension: yaml
-
+        ext-config: 
+          - data-id: chao-cloud-ext-feign.yaml #feign
+            group: ${spring.cloud.nacos.config.group}
+            refresh: true  
+        
 #日志          
 logging:
   config: classpath:chao-logback.xml
 log:
   path: /logs/${spring.cloud.nacos.config.group}/${spring.application.name}
-  maxHistory: 30
+  maxHistory: 30       

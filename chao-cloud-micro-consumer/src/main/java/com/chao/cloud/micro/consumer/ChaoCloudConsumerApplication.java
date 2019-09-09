@@ -9,6 +9,7 @@ import com.chao.cloud.common.extra.tx.annotation.EnableTxSeata;
 import com.chao.cloud.common.web.annotation.EnableGlobalException;
 import com.chao.cloud.common.web.annotation.EnableWeb;
 import com.chao.cloud.micro.api.annotation.EnableFeignAPI;
+import com.chao.cloud.micro.api.sentinel.EnableSentinel;
 
 @SpringBootApplication
 @EnableDiscoveryClient // 微服务注册配置中心
@@ -17,6 +18,7 @@ import com.chao.cloud.micro.api.annotation.EnableFeignAPI;
 @EnableMybatisPlus // 数据库服务
 @EnableFeignAPI // feign
 @EnableTxSeata // 分布式事务
+@EnableSentinel // 限流
 public class ChaoCloudConsumerApplication {
 
 	public static void main(String[] args) {

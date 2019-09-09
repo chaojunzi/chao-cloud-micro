@@ -7,10 +7,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.annotation.ComponentScan;
 
 import com.chao.cloud.common.extra.feign.annotation.EnableFeign;
-import com.chao.cloud.micro.api.provider.ProviderFeignClient;
 
 /**
  * feign 接口
@@ -22,11 +20,7 @@ import com.chao.cloud.micro.api.provider.ProviderFeignClient;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @EnableFeign
-@ComponentScan(basePackages = { "com.chao.cloud.micro.api" })
-// 每增加一个手动加入-为了方便使用
-@EnableFeignClients(clients = { //
-		ProviderFeignClient.class, // 提供
-})
+@EnableFeignClients(basePackages = "com.chao.cloud.micro.api.feign")
 public @interface EnableFeignAPI {
 
 }

@@ -21,4 +21,5 @@ public class TblController {
 	public Response<Integer> test(@NotNull Integer userId) {
 		return Response.ok(tblService.test(userId));
 	}
+
 }

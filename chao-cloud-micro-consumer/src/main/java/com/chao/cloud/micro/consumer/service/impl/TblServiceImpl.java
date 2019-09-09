@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chao.cloud.micro.api.provider.ProviderFeignClient;
+import com.chao.cloud.micro.api.feign.ProviderFeignClient;
 import com.chao.cloud.micro.consumer.dal.entity.XcTbl;
 import com.chao.cloud.micro.consumer.dal.mapper.XcTblMapper;
 import com.chao.cloud.micro.consumer.service.TblService;

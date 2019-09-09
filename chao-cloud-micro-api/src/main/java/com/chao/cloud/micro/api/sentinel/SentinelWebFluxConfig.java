@@ -1,4 +1,4 @@
-package com.chao.cloud.micro.gateway.config;
+package com.chao.cloud.micro.api.sentinel;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +18,7 @@ import cn.hutool.core.collection.CollUtil;
 import lombok.Data;
 
 /**
- * 
+ * 网关限流
  * @author 薛超
  * @since 2019年8月30日
  * @version 1.0.7
@@ -26,7 +26,7 @@ import lombok.Data;
 @Configuration
 @ConfigurationProperties(prefix = "spring.cloud.sentinel")
 @Data
-public class SentinelConfig implements InitializingBean {
+public class SentinelWebFluxConfig implements InitializingBean {
 
 	private Set<GatewayFlowRule> rules = new HashSet<>();
 

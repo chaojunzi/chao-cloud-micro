@@ -1,4 +1,4 @@
-chao-cloud-micro: springcloud feign+nacos+seata+sentinel+mybatis-plus  
+chao-cloud-micro: springcloud feign+nacos+seata+sentinel+mybatis-plus+oauth2+security  
 =====
 
 <p>
@@ -12,11 +12,12 @@ chao-cloud-micro: springcloud feign+nacos+seata+sentinel+mybatis-plus
 
 ------
 
-以 spring-cloud 为基础，集成feign、nacos、seata、sentinel、mybatis-plus 整合单机版分布式事务
+以 spring-cloud 为基础，集成feign、nacos、seata、sentinel、mybatis-plus 整合单机版分布式事务，附加oauth2.0+security配置
 
 	chao-cloud-micro
 	    ├─api 		//feign接口
-	    ├─gateway 		//微服务网关  8000
+	    ├─auth 		//微服务oauth2+security 8003（默认不开启，请在gateway打开过滤器 OAuth2GlobalFilter.class）
+	    ├─gateway 		//微服务网关 8000
 	    ├─provider 		//服务提供者 8001
 	    └─consumer		//服务消费者 8002
 		
@@ -28,12 +29,14 @@ chao-cloud-micro: springcloud feign+nacos+seata+sentinel+mybatis-plus
 - 新建数据源 seata，导入 sql/seata.sql
 - 新建数据源 nacos，导入 sql/nacos.sql   
 	- 注：nacos为微服务配置中心下一步详细介绍
+- 新建数据源 oauth2，导入 sql/oauth2.sql   
+	- 注：oauth2为微服务接口权限控制，默认不开启，非本章重点，可忽略。
 
 ## Step2-配置nacos（[nacos@安装手册](https://nacos.io/zh-cn/docs/quick-start.html)）
 
 ##### 1.安装nacos
 - [下载nacos-1.1.3版本](https://github.com/alibaba/nacos/releases) ->nacos-server-1.1.3.zip
-- 解压、修改 conf/application.properties、新增以下3行配置
+- 解压、修改 conf/application.properties、新增以下5行配置
 
 ```
 spring.datasource.platform=mysql
@@ -62,8 +65,9 @@ db.password=123456
 
 ##### 3.修改nacos 配置管理->配置列表->点击chao-cloud 
 
-- chao-cloud-ext-provider.yaml  		 
-- chao-cloud-ext-consumer.yaml  		
+- chao-cloud-provider.yaml  		 
+- chao-cloud-consumer.yaml  		
+- chao-cloud-auth.yaml (同上，可忽略)  		
 
 ![Image text](screenshot/nacos-2.png)
 ![Image text](screenshot/nacos-3.png)
@@ -143,8 +147,11 @@ sh ./bin/seata-server.sh -p 8091 -m file
 
 ## Step4-测试
 
-#####  http://localhost:8000/chao-cloud-consumer/test?userId=1
-#####  查看 seata 数据库的 order表 是否有数据，没有则正确
+1. 启动  gateway
+2. 启动  provider
+3. 启动  consumer
+4. http://localhost:8000/chao-cloud-consumer/test?userId=1
+5. 查看 seata 数据库的 order表 是否有数据，没有则正确
 
 
 ## 自定义 seata-nacos配置（此步骤可选）
@@ -169,7 +176,7 @@ chao:
 
 ## 注意 
 
-### TxSeataConfig 配置 （原理）
+### 1.TxSeataConfig 配置 （原理）
 
 这里是尤其需要注意的，Seata 是通过代理数据源实现事务分支，所以需要配置 `io.seata.rm.datasource.DataSourceProxy` 的 Bean，且是 `@Primary`默认的数据源，否则事务不会回滚，无法实现分布式事务 
 
@@ -205,9 +212,45 @@ public class TxSeataConfig {
 }
 ```
 
+### 2.OAuth 2.0 配置
+
+```java 
+<!-- oauth2 已经包含 security -->
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-oauth2</artifactId>
+</dependency>
+```
+
+- gateway-> OAuth2GlobalFilter 解开注释
+- gateway-> OAuth2Properties 配置过滤的路径
+
+```请不要重复
+chao:
+  cloud:
+    oauth2:
+      ant-matchers:
+      - /health/**
+      - /login/**
+```
+- auth-> AuthorizationServerConfig oauth2认证中心
+- auth-> ResourceServerConfig 启用资源服务
+- auth-> SecurityConfig Security 权限管理（本项目）
+- auth-> MappingAuthProperties 配置路径-> 权限映射
+
+```
+chao:
+  cloud:
+    oauth2:
+      mapping-auth: # 这里的@代表 / ，意为 路径:权限
+        @chao-cloud-auth@oauth@user: ROLE_USER
+```
+
 ## 参考
 - [nacos参考手册](https://nacos.io/en-us/docs/what-is-nacos.html)
 - [helloworlde@seata部署](https://github.com/helloworlde/spring-cloud-alibaba-component/tree/master/cloud-seata-nacos)
+- [阮一峰@OAuth2的四种方式](http://www.ruanyifeng.com/blog/2019/04/oauth-grant-types.html)
+- [OAuth2授权](https://www.jianshu.com/p/9d0264d27c3b)
 
 ------
 
@@ -241,4 +284,4 @@ public class TxSeataConfig {
 
 作者 [@chaojunzi 1521515935@qq.com]
 
-2019年8月28日
+2019年9月9日

@@ -1,4 +1,4 @@
-package com.chao.cloud.micro.consumer.config;
+package com.chao.cloud.micro.api.sentinel;
 
 import java.io.IOException;
 import java.util.ArrayList;

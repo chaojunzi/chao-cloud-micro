@@ -21,5 +21,21 @@
 			<artifactId>spring-cloud-openfeign-core</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>com.alibaba.csp</groupId>
+			<artifactId>sentinel-core</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.csp</groupId>
+			<artifactId>sentinel-web-servlet</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<!-- gateway webflux -->
+		<dependency>
+			<groupId>com.alibaba.csp</groupId>
+			<artifactId>sentinel-api-gateway-adapter-common</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 </project>
