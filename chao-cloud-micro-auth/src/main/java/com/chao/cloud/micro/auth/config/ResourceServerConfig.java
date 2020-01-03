@@ -24,6 +24,7 @@ import com.chao.cloud.micro.api.util.ExcepUtil;
 
 /**
  * 资源服务配置
+ * 
  * @EnableResourceServer 启用资源服务
  */
 @Configuration

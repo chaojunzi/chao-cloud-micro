@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.github.chaojunzi</groupId>
 		<artifactId>chao-cloud-micro-parent</artifactId>
-		<version>1.0.7</version>
+		<version>1.0.8</version>
 	</parent>
 	<artifactId>chao-cloud-micro-auth</artifactId>
 	<packaging>jar</packaging>
 	<dependencies>
 		<!-- oauth2 -->
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-oauth2</artifactId>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>${security-oauth2.version}</version>
 		</dependency>
 		<!-- api -->
 		<dependency>

@@ -22,6 +22,7 @@ import com.chao.cloud.micro.auth.service.XcUserService;
 
 /**
  * http://localhost:8003/oauth/token?grant_type=password&client_id=client_1&username=user&client_secret=123456&scope=all&password=1
+ * 
  * @author 薛超
  * @since 2019年9月4日
  * @version 1.0.7

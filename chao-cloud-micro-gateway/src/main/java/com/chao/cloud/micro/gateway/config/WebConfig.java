@@ -12,8 +12,9 @@ import org.springframework.http.codec.HttpMessageReader;
 import org.springframework.http.codec.HttpMessageWriter;
 import org.springframework.http.codec.ServerCodecConfigurer;
 
-import com.chao.cloud.common.core.SpringContextUtil;
-import com.chao.cloud.common.web.HealthController;
+import com.chao.cloud.common.web.controller.HealthController;
+
+import cn.hutool.extra.spring.SpringUtil;
 
 @Configuration
 public class WebConfig {
@@ -24,24 +25,24 @@ public class WebConfig {
 	}
 
 	@Bean
-	public SpringContextUtil springContextUtil(ApplicationContext applicationContext) {
-		SpringContextUtil util = new SpringContextUtil();
+	public SpringUtil SpringUtil(ApplicationContext applicationContext) {
+		SpringUtil util = new SpringUtil();
 		util.setApplicationContext(applicationContext);
 		return util;
 	}
 
 	@Bean
 	@Order(-2)
-	public GlobalExceptionHandler globalErrorWebExceptionHandler(SpringContextUtil springContext,
+	public GlobalExceptionHandler globalErrorWebExceptionHandler(SpringUtil springContext,
 			ErrorAttributes errorAttributes, ResourceProperties resourceProperties)
 			throws NoSuchFieldException, SecurityException {
-		ServerCodecConfigurer serverCodecConfigurer = SpringContextUtil.getBean(ServerCodecConfigurer.class);
+		ServerCodecConfigurer serverCodecConfigurer = SpringUtil.getBean(ServerCodecConfigurer.class);
 		List<HttpMessageReader<?>> readers = serverCodecConfigurer.getReaders();
 		List<HttpMessageWriter<?>> writers = serverCodecConfigurer.getWriters();
 		GlobalExceptionHandler handler = new GlobalExceptionHandler(//
 				errorAttributes, //
 				resourceProperties, //
-				SpringContextUtil.getApplicationContext());
+				SpringUtil.getApplicationContext());
 		handler.setMessageReaders(readers);
 		handler.setMessageWriters(writers);
 		return handler;
